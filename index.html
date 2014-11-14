@@ -1,0 +1,29 @@
+<html>
+<head>
+	<title>Blackjack</title>
+	<link rel="stylesheet" type="text/css" href="style.css"/>
+	<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+	<script src="jquery-2.1.1.min.js"></script>
+	<script src="script.js"></script>
+</head>
+
+<body>
+	<input type="button" onclick="showAce()" value="Ace"/>
+	<input type="button" onclick="showKing()" value="King"/>
+	<input type="button" onclick="showRandomCard()" value="Random"/>
+	<input type="button" onclick="newGame()" value="New game"/>
+	<img src="classic-cards/b2fv.png" id="image"/>
+	<p id="bankScore"></p>
+	<div id="bank">
+	Bank
+	</div>
+	<p id="playerScore"></p>
+	<div id="player">
+	Player
+	</div>
+	<input type="button" onclick="playerDraw()" value="Draw"/>
+	<div id="cards">
+	
+	</div>
+</body>
+</html>
