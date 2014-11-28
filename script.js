@@ -1,5 +1,6 @@
 // Global variables
-var cardsArray = setDeck();
+var cardsArray;
+var totalCardsDrawed;
 
 var playerCards;
 var playerPoints;
@@ -8,13 +9,14 @@ var playerMoney;
 var bankCards;
 var bankPoints;
 
-// Set a new party (when you enter into the casino)
-function newParty()
+// Play a card animation with Circulate library
+function animateCard()
 {
-	playerCards = new Array();
-	playerMoney = 1000;
-	
-	bankCards = new Array();
+	$("#" + totalCardsDrawed).circulate({
+				speed: 200,
+				height: 150,
+				width: 150
+			});
 }
 
 // TEMP - Show Ace card
@@ -36,46 +38,63 @@ function showRandomCard()
 	$("#image").attr("src","classic-cards/" + card + ".png");
 }
 
-// Deal a card (random)
+// Deal a card ==> Return a random value between 1 and 52 to select a random card from cardsArray (pre-created with setDeck method)
 function dealCard()
 {
+	totalCardsDrawed++;
 	return Math.floor((Math.random() * 52) + 1);
+	
 }
 
-// Set a new game (new card draw)
+// Start a new game
 function newGame()
 {	
+	// Initialise all variables for all game
+	cardsArray = setDeck();
+	playerMoney = 1000;
+	
 	newParty();
-	
-	var d = setDeck();
-	
-	bankCards.push(d[dealCard()]);
-	bankPoints = bankCards[0][2];
-	
-	playerCards.push(d[dealCard()]);
-	playerCards.push(d[dealCard()]);
-	playerPoints = playerCards[0][2] + playerCards[1][2];
+}
+
+// Start a new party
+function newParty()
+{
+	// Initialise all variables for a party
+	bankCards = new Array();
+	playerCards = new Array();
+	bankPoints = 0;
+	playerPoints = 0;
+	totalCardsDrawed = 0;
 	
 	$("#bank").empty();
 	$("#player").empty();
 	
-	$("#bank").append('<img src="classic-cards/' + bankCards[0][1] + '.png"/>');
-	$("#player").append('<img src="classic-cards/' + playerCards[0][1] + '.png"/>');
-	$("#player").append('<img src="classic-cards/' + playerCards[1][1] + '.png"/>');
-	
+	bankDraw();
+	playerDraw();
+	playerDraw();
+}
+
+// Bank draw a card
+function bankDraw()
+{	
+	bankCards.push(cardsArray[dealCard()]);
+	$("#bank").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + bankCards[bankCards.length-1][1] + '.png"/>');
+	bankPoints += bankCards[bankCards.length-1][2];
 	$("#bankScore").text(bankPoints);
-	$("#playerScore").text(playerPoints);	
+	
+	animateCard();
 }
 
 // Player draw a card
 function playerDraw()
-{
-	var d = setDeck();
-	
-	playerCards.push(d[dealCard()]);
-	$("#player").append('<img src="classic-cards/' + playerCards[playerCards.length-1][1] + '.png"/>');
+{	
+	playerCards.push(cardsArray[dealCard()]);
+	$("#player").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + playerCards[playerCards.length-1][1] + '.png"/>');
 	playerPoints += playerCards[playerCards.length-1][2];
 	$("#playerScore").text(playerPoints);
+	
+	animateCard();
+		
 }
 
 // Prepare deck (52 cards) for Blackjack with all needed values for the game
