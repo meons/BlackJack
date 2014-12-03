@@ -1,5 +1,6 @@
-<html>
+<!DOCTYPE html>
 <head>
+	<meta charset="UTF-8">
 	<title>Blackjack</title>
 	<link rel="stylesheet" type="text/css" href="style.css"/>
 	<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
@@ -10,22 +11,30 @@
 </head>
 
 <body>
-	<input type="button" onclick="showAce()" value="Ace"/>
-	<input type="button" onclick="showKing()" value="King"/>
-	<input type="button" onclick="showRandomCard()" value="Random"/>
-	<input type="button" onclick="newGame()" value="New game"/>
-	<img src="classic-cards/b2fv.png" id="image"/>
-	<p id="bankScore"></p>
-	<div id="bank">
-	Bank
-	</div>
-	<p id="playerScore"></p>
-	<div id="player">
-	Player
-	</div>
-	<input type="button" onclick="playerDraw()" value="Draw"/>
-	<div id="cards">
-	
+	<div id="table" style="background-color: green">
+		<div id="parameters">
+			Themes :
+			<input type="button" onclick="setDefaultTheme()" value="Default"/>
+			<input type="button" onclick="setOrangeTheme()" value="Orange"/>
+		</div>
+		<div id="showWinner" style="background-color: yellow">
+			<p id="winner">Infos</p>
+		</div>
+		<input type="button" id="btnPlay" onclick="newParty()" value="Play"/>
+		<input type="number" id="playerBet" value="50" />
+		<p id="bankScore"></p>
+		<div id="bank">
+		
+		</div>
+		<p id="playerScore"></p>
+		<div id="player">
+		
+		</div>
+		<p id="playerMoney"></p>
+		<input type="button" id="btnDraw" onclick="playerDraw()" value="Draw" />
+		<input type="button" id="btnStay" onclick="bankDraw()" value="Stay" />
+		<input type="button" id="btnDouble" onclick="playerDouble()" value="Double" />
+		<input type="button" id="btnSplit" onclick="playerSplit()" value="Split" />
 	</div>
 </body>
 </html>
