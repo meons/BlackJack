@@ -53,6 +53,40 @@ function animateCard()
 	$("#" + totalCardsDrawed).slideDown(1000);
 }
 
+function checkParty()
+{
+	// If BlackJack
+	if (playerPoints == 21 && playerCards.length == 2)
+	{
+		playerWinBlackJack();
+	}
+	// If player busts
+	else if (playerPoints > 21)
+	{
+		bankWin();
+	}
+	// If bank busts
+	else if (bankPoints > 21)
+	{
+		playerWin();
+	}
+	// If player is bether that bank
+	else if (playerPoints > bankPoints && bankPoints >= 17)
+	{
+		playerWin();
+	}
+	// If bank is bether that bank
+	else if (playerPoints < bankPoints && bankPoints >= 17)
+	{
+		bankWin();
+	}
+	// If bank and player have same points
+	else if (playerPoints == bankPoints && bankPoints >= 17)
+	{
+		equality();
+	}
+}
+/*
 // Check who win the party by comparing points
 function checkWinner()
 {
@@ -71,7 +105,7 @@ function checkWinner()
 		equality();
 	}
 }
-
+*/
 // When player wins with BlackJack
 function playerWinBlackJack()
 {
@@ -117,10 +151,12 @@ function updateBankPoints()
 {
 	bankPoints = calculateBankPoints();
     $("#bankScore").text(bankPoints);
+	/*
     if(bankPoints > 21)
     {
 		playerWin();
     }
+	*/
 }
 
 // Calculate bank points and manage count if aces are present
@@ -151,10 +187,12 @@ function updatePlayerPoints()
 {
 	playerPoints = calculatePlayerPoints();
     $("#playerScore").text(playerPoints);
+	/*
     if(playerPoints > 21)
     {
 		bankWin();
     }
+	*/
 }
 
 // Calculate player points and manage count if aces are present
@@ -185,7 +223,7 @@ function dealCard()
 {
 	totalCardsDrawed++;
 	return Math.floor((Math.random() * 52) + 1);
-	//return Math.floor((Math.random() * 4) + 1);
+	//return Math.floor((Math.random() * 8) + 1);
 }
 
 // Start a new party
@@ -213,17 +251,20 @@ function newParty()
 	
 	bankFirstDraw();
 	playerDraw();
-	playerDraw();
-	
-	if (playerCards[0][2] == playerCards[1][2])
-	{
-		$("#btnSplit").show();
-	}
-	
-	if (playerPoints == 21)
-	{
-		playerWinBlackJack();
-	}
+	setTimeout(function() {
+		playerDraw();
+
+		if (playerCards[0][2] == playerCards[1][2])
+		{
+			$("#btnSplit").show();
+		}
+		/*
+		if (playerPoints == 21)
+		{
+			playerWinBlackJack();
+		}
+		*/
+	}, 1000);
 }
 
 // What happens when party is terminated
@@ -239,7 +280,28 @@ function partyEnded()
 // Bank draw until points are >= 17 and <= 21
 // Bank loses when points are > 21
 function bankDraw()
-{	
+{
+	setTimeout(function() {
+		bankCards.push(cardsArray[dealCard()]);
+		$("#bank").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + bankCards[bankCards.length-1][1] + '.png"/>');
+		updateBankPoints();
+		animateCard();
+		
+		if(bankPoints < 17)
+		{
+			bankDraw();
+		}
+		
+		checkParty();
+		/*
+		if (bankPoints < 22)
+		{
+			checkWinner();
+		}
+		*/
+	}, 1000);
+	
+	/*
 	while (bankPoints < 17)
 	{
 		bankCards.push(cardsArray[dealCard()]);
@@ -253,6 +315,7 @@ function bankDraw()
 	{
 		checkWinner();
 	}
+	*/
 }
 
 // Only 1 draw when game starts
@@ -279,6 +342,8 @@ function playerDraw()
 	updatePlayerPoints();
 	
 	animateCard();
+	
+	checkParty();
 }
 
 // Player double -> so he draw only 1 card and double the bet
