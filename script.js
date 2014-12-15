@@ -1,8 +1,3 @@
-/*
-Slider + other jqeury UI : http://jqueryui.com/slider/#steps
-
-*/
-
 function setDefaultTheme()
 {
 	$("#table").css("background-color", "green");
@@ -14,43 +9,32 @@ function setOrangeTheme()
 }
 
 // Global variables
+var partyStarted = false;
 var cardsArray; // All cards with all needed infos/values
+var playerName= "abdel";
 var totalCardsDrawed; // Drawed cards counter (for each party)
 
-var playerGroupCards; // Array containing player cards array when he split
 var playerCards; // Player cards array (for each party)
 var playerPoints; // Player points (for each party)
-var playerMoney; // Player money
-var playerBet; // Player bet (for each party)
+
 
 var bankCards; // Bank cards (for each party)
 var bankPoints; // Bank points (for each party)
 
-// This code is executed when the page loads
-$(window).load(function() {
+//var totalBet;
+//var gameBet;
 
-	// Initialise all variables for all game
-	cardsArray = setDeck();
-	playerMoney = 1000;
-	
-	$("#playerMoney").text(playerMoney);
-	
-	partyEnded(); // When the page loads, the game is in the same state that a ended party
-});
+var playerMoney; // Player money
+var playerBet; // Player bet (for each party)
 
 // Play a card animation with Circulate library
 function animateCard()
 {
-/*
 	$("#" + totalCardsDrawed).circulate({
 				speed: 200,
 				height: 150,
 				width: 150
 			});
-*/
-
-	$("#" + totalCardsDrawed).slideUp(0);
-	$("#" + totalCardsDrawed).slideDown(1000);
 }
 
 function checkParty()
@@ -86,32 +70,13 @@ function checkParty()
 		equality();
 	}
 }
-/*
-// Check who win the party by comparing points
-function checkWinner()
-{
-	if (bankPoints < playerPoints)
-	{
-		playerWin();
-	}
-	
-	if (bankPoints > playerPoints)
-	{
-		bankWin();
-	}
-	
-	if (bankPoints == playerPoints)
-	{
-		equality();
-	}
-}
-*/
+
 // When player wins with BlackJack
 function playerWinBlackJack()
 {
 	playerMoney += playerBet * 2,5;
-	$("#playerMoney").text(playerMoney);
-	$("#winner").text("BLACKJACK !!!");
+	$("#totalBetSpan").text(playerMoney);
+	$("#description").text("BLACKJACK !!!");
 	partyEnded();
 }
 
@@ -119,8 +84,8 @@ function playerWinBlackJack()
 function playerWin()
 {
 	playerMoney += playerBet * 2;
-	$("#playerMoney").text(playerMoney);
-	$("#winner").text("Vous gagnez !");
+	$("#totalBetSpan").text(playerMoney);
+	$("#description").text("Vous gagnez !");
 	partyEnded();
 }
 
@@ -132,8 +97,8 @@ function bankWin()
 		playerMoney = 1000;
 		alert("The bank accorded you a 1000 credit.");
 	}
-	$("#playerMoney").text(playerMoney);
-	$("#winner").text("La banque gagne !");
+	$("#totalBetSpan").text(playerMoney);
+	$("#description").text("La banque gagne !");
 	partyEnded();
 }
 
@@ -141,15 +106,43 @@ function bankWin()
 function equality()
 {
 	playerMoney += playerBet * 1;
-	$("#playerMoney").text(playerMoney);
-	$("#winner").text("Egalité");
+	$("#totalBetSpan").text(playerMoney);
+	$("#description").text("Egalité");
 	partyEnded();
 }
+
+function partyEnded()
+{
+	$("#play").prop("disabled", false);
+	$("#btnDouble").prop("disabled", true);
+	$("#stand").prop("disabled", true);
+	$("#hit").prop("disabled", true);
+        //Check if the player's total money is less than max of the slider, if not, set the slider's max
+        var maxSlider = document.getElementById("betSlider").max;
+        if(playerMoney < maxSlider)
+        {
+            document.getElementById("betSlider").max = playerMoney;
+            document.getElementById("betSlider").value = playerMoney;
+            document.getElementById("gameBetText").value = playerMoney;
+        }
+}
+
+// Player double -> so he draw only 1 card and double the bet
+function playerDouble()
+{
+    
+	playerMoney -= playerBet;
+	playerBet += playerBet;
+	$("#totalBetSpan").text(playerMoney);
+	playerDraw();
+	bankDraw();
+}
+
 
 // Update bank points
 function updateBankPoints()
 {
-	bankPoints = calculateBankPoints();
+    bankPoints = calculateBankPoints();
     $("#bankScore").text(bankPoints);
 	/*
     if(bankPoints > 21)
@@ -162,7 +155,7 @@ function updateBankPoints()
 // Calculate bank points and manage count if aces are present
 function calculateBankPoints()
 {
-	var points = 0;
+    var points = 0;
     var aces = 0;
     for (var i in bankCards)
     {
@@ -185,7 +178,7 @@ function calculateBankPoints()
 // Update player points
 function updatePlayerPoints()
 {
-	playerPoints = calculatePlayerPoints();
+    playerPoints = calculatePlayerPoints();
     $("#playerScore").text(playerPoints);
 	/*
     if(playerPoints > 21)
@@ -198,7 +191,7 @@ function updatePlayerPoints()
 // Calculate player points and manage count if aces are present
 function calculatePlayerPoints()
 {
-	var points = 0;
+    var points = 0;
     var aces = 0;
     for (var i in playerCards)
     {
@@ -217,174 +210,139 @@ function calculatePlayerPoints()
     
     return points;	
 }
-
-// Deal a card ==> Return a random value between 1 and 52 to select a random card from cardsArray (pre-created with setDeck method)
+// Deal a card (random)
 function dealCard()
 {
-	totalCardsDrawed++;
-	return Math.floor((Math.random() * 52) + 1);
-	//return Math.floor((Math.random() * 8) + 1);
+    totalCardsDrawed++;
+    return Math.floor((Math.random() * 52) + 1);
 }
 
-// Start a new party
+// Set a new game (new card draw)
+function newGame()
+{	
+    //Check id the party has been initialized
+    if(!partyStarted)
+        return;
+    //Check if game's bet has been set up
+    if(checkBet())
+    {
+        // Initialise all variables for all game
+	cardsArray = setDeck();
+	//playerMoney = 1000;	
+	newParty();
+        setBackgroundColor("white");
+        //Disable Double bet function if player's money is less than 2x player's bet
+        if(playerMoney < 2*playerBet)
+        {
+            $("#btnDouble").prop("disabled", true);
+        }
+        else
+            $("#btnDouble").prop("disabled", false);
+    }
+    else{
+        setBackgroundColor("red");
+        //Add animation!
+    }
+  	
+}
+// Set a new party (when you enter into the casino)
 function newParty()
 {
-	// Initialise all variables for a party
+    
+    // Initialise all variables for a party
 	bankCards = new Array();
 	playerCards = new Array();
 	bankPoints = 0;
 	playerPoints = 0;
 	totalCardsDrawed = 0;
-	playerBet = Number($("#playerBet").val());
+	
+        playerBet = Number($("#gameBetText").val());
+        
 	playerMoney -= playerBet;
+        
+        
+        $("#totalBetSpan").text(playerMoney);
+        
+        $("#btnDouble").prop("disabled", false);
+	$("#stand").prop("disabled", false);
+	$("#hit").prop("disabled", false);
+        $("#play").prop("disabled", true);
+        
+        $("#bank").empty();
+        $("#player_cards").empty();       
 	
-	$("#playerMoney").text(playerMoney);
-	
-	$("#btnPlay").hide();
-	$("#btnDraw").show();
-	$("#btnStay").show();
-	$("#btnDouble").show();
-	
-	$("#bank").empty();
-	$("#player").empty();
-	$("#winner").text("Infos");
-	
-	bankFirstDraw();
+	//bankDraw();
+        bankFirstDraw();
+        $("#bank").append('<img id="hiddenCard" src="classic-cards/b1fv.png"/>');
+       // $("#bank").append('<img src="classic-cards/b1fv.png"/>');
 	playerDraw();
-	setTimeout(function() {
-		playerDraw();
-
-		if (playerCards[0][2] == playerCards[1][2])
-		{
-			$("#btnSplit").show();
-		}
-		/*
-		if (playerPoints == 21)
-		{
-			playerWinBlackJack();
-		}
-		*/
-	}, 1000);
+	playerDraw();
+        $("#description").text("Hit , Stand or Double!");
 }
 
-// What happens when party is terminated
-function partyEnded()
-{
-	$("#btnPlay").show();
-	$("#btnDraw").hide();
-	$("#btnStay").hide();
-	$("#btnDouble").hide();
-	$("#btnSplit").hide();
-}
-
-// Bank draw until points are >= 17 and <= 21
-// Bank loses when points are > 21
-function bankDraw()
-{
-	setTimeout(function() {
-		bankCards.push(cardsArray[dealCard()]);
-		$("#bank").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + bankCards[bankCards.length-1][1] + '.png"/>');
-		updateBankPoints();
-		animateCard();
-		
-		if(bankPoints < 17)
-		{
-			bankDraw();
-		}
-		
-		checkParty();
-		/*
-		if (bankPoints < 22)
-		{
-			checkWinner();
-		}
-		*/
-	}, 1000);
-	
-	/*
-	while (bankPoints < 17)
-	{
-		bankCards.push(cardsArray[dealCard()]);
-		$("#bank").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + bankCards[bankCards.length-1][1] + '.png"/>');
-		updateBankPoints();
-		animateCard();
-	}
-	
-	// Check winner only if bank is between 17 and 21, in the all others cases player or bank bust so we already know who win
-	if (bankPoints < 22)
-	{
-		checkWinner();
-	}
-	*/
-}
-
-// Only 1 draw when game starts
 function bankFirstDraw()
 {
+    
 	bankCards.push(cardsArray[dealCard()]);
 	$("#bank").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + bankCards[bankCards.length-1][1] + '.png"/>');
 	updateBankPoints();
 	
-	animateCard();
+	//animateCard();
 }
-
+// Bank draw a card
+function bankDraw()
+{	
+        //Check id the party has been initialized
+        if(!partyStarted)
+            return;
+	bankCards.push(cardsArray[dealCard()]);
+        $("#hiddenCard").remove();
+	$("#bank").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + bankCards[bankCards.length-1][1] + '.png"/>');
+	//bankPoints += bankCards[bankCards.length-1][2];
+	//$("#bankScore").text(bankPoints);
+        
+	updateBankPoints();
+	//animateCard();
+        while(bankPoints < 17){
+            bankDraw();
+        }
+        checkParty();
+}
 // Player draw a card
 function playerDraw()
-{	
-	if (playerCards.length >= 2)
+{       
+        //Check id the party has been initialized
+        if(!partyStarted)
+            return;
+        if (playerCards.length >= 2)
 	{
-		$("#btnDouble").hide(); // Player can double only 1 time and when party starts
+                $("#btnDouble").prop("disabled", true);
+		$("#description").text("Hit or Stand!");
 	}
-	
-	playerCards.push(cardsArray[dealCard()]);
-	$("#player").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + playerCards[playerCards.length-1][1] + '.png"/>');
-	
+        playerCards.push(cardsArray[dealCard()]);
+	$("#player_cards").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + playerCards[playerCards.length-1][1] + '.png"/>');
 	updatePlayerPoints();
-	
-	animateCard();
-	
-	checkParty();
-}
-
-// Player double -> so he draw only 1 card and double the bet
-function playerDouble()
-{
-	playerMoney -= playerBet;
-	playerBet += playerBet;
-	$("#playerMoney").text(playerMoney);
-	playerDraw();
-	bankDraw();
-}
-
-
-// Player can split when he has 2 cards with same points
-// So he has 2 games instead of one and he can draw/stay on each game
-// So the bet is doubled too
-function playerSplit()
-{
-	playerGroupCards = new Array();
-	playerGroupScores = new Array();
-	
-	for (var i in playerCards)
-	{
-		playerGroupCards.push(playerCards[i]);
-	}
-	
-	//$("#player").empty();		
+        //playerPoints += playerCards[playerCards.length-1][2];
+	//$("#playerScore").text(playerPoints);
+        
+        checkParty();
+        //checkEndGame();
+	//animateCard();
 }
 
 // Prepare deck (52 cards) for Blackjack with all needed values for the game
 // Array from 1 to 52 cases
 // In each case an another array containing [Card name][Card id][PointsA][PointsB]
 // Remarks :	card names are in same order that png card images
+//				only Aces have PointsB because they can be worth 1 or 11
 function setDeck()
 {	
 	var deck = new Array();
-	// High cards Aces (A) -> 11 or 1 points (points are managed in calculatePlayerPoints and calculateBankPoints methods)
-	deck[1] = new Array("Ac", 1, 11);
-	deck[2] = new Array("As", 2, 11);
-	deck[3] = new Array("Ah", 3, 11);
-	deck[4] = new Array("Ad", 4, 11);
+	// High cards Aces (A) -> 11 or 1 points
+	deck[1] = new Array("Ac", 1, 11, 1);
+	deck[2] = new Array("As", 2, 11, 1);
+	deck[3] = new Array("Ah", 3, 11, 1);
+	deck[4] = new Array("Ad", 4, 11, 1);
 	
 	// High cards from K to T -> 10 points for all	
 	for (i = 5; i <= 20; i++)
@@ -503,4 +461,73 @@ function setDeck()
 			deck[i][0] = "2" + deck[i][0];
 		}
 	}
+}
+
+function getPlayerName(){
+        
+}
+function setPlayerName(){
+    var textField = document.getElementById("playerName");
+    playerName = textField.value;
+    var name = document.getElementById("nameOfPlayer");
+    if(playerName.length !== 0){            
+        name.innerText = playerName;
+    }
+    else
+        name.innerText = 'Anonyme';
+}
+function setTotalBet(){
+    //var bet = document.getElementById("bet");
+    var betDisplay = document.getElementById("totalBetSpan");
+    //playerMoney = bet.value;
+    playerMoney = Number($("#bet").val());
+    if(playerMoney < 300)
+    {
+        document.getElementById("betSlider").max = playerMoney;
+    }
+    betDisplay.appendChild(document.createTextNode(playerMoney));
+}
+function initializeGame(){
+        setPlayerName();
+        setTotalBet();
+        var nameInput = document.getElementById("playerName").disabled = true;
+        var totalBetInput = document.getElementById("bet").disabled = true;       
+        $("#newgame").prop("disabled", true);
+        $("#play").prop("disabled", false);
+        partyStarted = true;
+        //Change description text
+        $("#description").text("Click \"Play\" to start a new party");
+}
+function checkBet(){
+    var placedBet = document.getElementById("gameBetText");
+    if(placedBet.value == '')
+        return false;
+    else{
+        //playerMoney = placedBet.value;
+        
+        return true;
+    }
+        
+}
+function setBackgroundColor(color){
+    document.getElementById("gameBetText").style.backgroundColor = color;
+}
+function checkEndGame(){
+    //Game's end
+    if(playerPoints == 21) //1 : total points is 21
+    {
+        setDescription("Congratulation");
+    }
+    else if(playerPoints > 21) //2 : Total points is more than 21
+    {
+        setDescription("Sorry, you lose!");
+    }
+}
+function setDescription(desc){
+    document.getElementById("state").innerHTML = desc;
+}
+//Check if the party has been intialized
+function checkStartGame(){
+    if(!partyStarted)
+        return;
 }

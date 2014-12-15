@@ -1,40 +1,95 @@
 <!DOCTYPE html>
-<head>
-	<meta charset="UTF-8">
+<html>
+<head>    
 	<title>Blackjack</title>
+        <meta charset="UTF-8">
 	<link rel="stylesheet" type="text/css" href="style.css"/>
 	<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
 	<script src="jquery-2.1.1.min.js"></script>
-	<script src='circulate/jquery.easing.1.2.js'></script>
-	<script src='circulate/jquery.circulate.js'></script>
 	<script src="script.js"></script>
+        <script src="design.js"></script>
+        
 </head>
 
 <body>
-	<div id="table" style="background-color: green">
-		<div id="parameters">
-			Themes :
-			<input type="button" onclick="setDefaultTheme()" value="Default"/>
-			<input type="button" onclick="setOrangeTheme()" value="Orange"/>
-		</div>
-		<div id="showWinner" style="background-color: yellow">
-			<p id="winner">Infos</p>
-		</div>
-		<input type="button" id="btnPlay" onclick="newParty()" value="Play"/>
-		<input type="number" id="playerBet" value="50" />
-		<p id="bankScore"></p>
-		<div id="bank">
-		
-		</div>
-		<p id="playerScore"></p>
-		<div id="player">
-		
-		</div>
-		<p id="playerMoney"></p>
-		<input type="button" id="btnDraw" onclick="playerDraw()" value="Draw" />
-		<input type="button" id="btnStay" onclick="bankDraw()" value="Stay" />
-		<input type="button" id="btnDouble" onclick="playerDouble()" value="Double" />
-		<input type="button" id="btnSplit" onclick="playerSplit()" value="Split" />
+    <div id="container">
+        <div id="side">
+            <div id="settings">
+                
+                <label class="font-white" for="name">Player Name</label>
+                <input id="playerName" type="text" name="name" />
+                
+                <br>
+                <label  class="font-white" for="bet">Bet (.-CHF)</label>
+                <input id="bet" type="text" value="300" name="name" disabled="disabled"/>
+                <br/>
+                <input type="range" id="totalBetSlider" min="50" max="3500" step="150" value="300" onChange="sliderChange(this.value, 'bet')">
+                <hr>
+                <p><input id="newgame"  class="bouton" type="button" value="New Game" name="new_game" 
+                       onmouseout="defaultAnimationButton('newgame')" 
+                       onmouseover="animateButton('newgame')" 
+                       onclick="initializeGame(); defaultAnimationButton('newgame')"/></p>
+                <p><input id="play"  class="bouton" type="button" value="Play" name="play" disabled="disabled"
+                       onmouseout="defaultAnimationButton('play')" 
+                       onmouseover="animateButton('play')" 
+                       onclick="newGame(); defaultAnimationButton('play')"/></p>
+                <p><input id="hit" type="button" class="bouton" value="Hit" name="hit" disabled="disabled"
+                       onmouseout="defaultAnimationButton('hit')" 
+                       onmouseover="animateButton('hit')" 
+                       onclick="playerDraw(); defaultAnimationButton('hit')"/></p>
+                <p><input id="stand" type="button" class="bouton" value="Stand" name="stand" disabled="disabled"
+                       onmouseout="defaultAnimationButton('stand')" 
+                       onmouseover="animateButton('stand')" 
+                       onclick="bankDraw(); defaultAnimationButton('stand')"/></p>
+                <p><input id="btnDouble" type="button" class="bouton" value="Double" name="double" disabled="disabled"
+                       onclick="playerDouble(); defaultAnimationButton('btnDouble')"
+                       onmouseout="defaultAnimationButton('btnDouble')" 
+                       onmouseover="animateButton('btnDouble')"/></p>
+                
+            </div>
+        </div><div id="content">
+            <div id="bank_layer">
+                <div id="bank_image"><img id="bankImage" src="avatars/blackjack1.png" alt=""/></div>
+                <div id="bank"></div>
+            </div>
+            
+            <div id="player_layer">                
+                <div id="playerTable">
+                    <div id="gameBet">
+                        <label class="labelStyle">Your bet:</label>
+                        <input id="gameBetText" TYPE="text" value="50" disabled="disabled"/>
+                        <br/>
+                        <input type="range" id="betSlider" min="0" max="300" step="10" value="50" onChange="sliderChange(this.value, 'gameBetText')">
+                        <br/><br/>
+                        <label class="labelStyle">Your score:</label>
+                        <span id="playerScore" class="font-white">0</span>
+                        <br/><br/>
+                        <label class="labelStyle">Bank score:</label>
+                        <span id="bankScore" class="font-white">0</span>
+                    </div>
+                    <div id="player_cards"></div>
+                    <div id="totalBet">
+                        <label class="labelStyle">You have:</label>
+                        <div id="totalBetContainer">
+                            <div id="emptySpan"></div>
+                            <div id="totalBetSpan"></div>
+                        </div>    
+                                               
+                    </div>
+                    <div id="player_image">
+                        <img id="bankImage" src="avatars/blackjack2.jpg" alt=""/>
+                    </div>
+                </div>
+                
+                <div id="player_Name">
+                    <label id="nameOfPlayer" for="name">Anonyme</label>
+                </div>
+                <div id="description">
+                    <div id="emptyState"></div>
+                    <div id="state">Welcome to Blackjack! Write your Name, choose your Bet and Click "New Game" to intialize the Game...</div>
+                </div>
+            </div>            
 	</div>
+    </div>
 </body>
 </html>
