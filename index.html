@@ -14,17 +14,19 @@
 <body>
     <div id="container">
         <div id="side">
-            <div id="settings">
-                
-                <label class="font-white" for="name">Player Name</label>
-                <input id="playerName" type="text" name="name" />
-                
+            <div id="settings">                
+                <label class="font-white" for="setName">Player Name</label>
+                <input id="playerName" type="text" name="name" />                
                 <br>
                 <label  class="font-white" for="bet">Bet (.-CHF)</label>
                 <input id="bet" type="text" value="300" name="name" disabled="disabled"/>
                 <br/>
                 <input type="range" id="totalBetSlider" min="50" max="3500" step="150" value="300" onChange="sliderChange(this.value, 'bet')">
                 <hr>
+                <p><input id="theme"  class="bouton" type="button" value="Change Theme" name="theme" 
+                       onmouseout="defaultAnimationButton('changeTheme')" 
+                       onmouseover="animateButton('changeTheme')" 
+                       onclick="changeTheme()"/></p>
                 <p><input id="newgame"  class="bouton" type="button" value="New Game" name="new_game" 
                        onmouseout="defaultAnimationButton('newgame')" 
                        onmouseover="animateButton('newgame')" 
@@ -44,8 +46,7 @@
                 <p><input id="btnDouble" type="button" class="bouton" value="Double" name="double" disabled="disabled"
                        onclick="playerDouble(); defaultAnimationButton('btnDouble')"
                        onmouseout="defaultAnimationButton('btnDouble')" 
-                       onmouseover="animateButton('btnDouble')"/></p>
-                
+                       onmouseover="animateButton('btnDouble')"/></p>                
             </div>
         </div><div id="content">
             <div id="bank_layer">
@@ -77,10 +78,10 @@
                                                
                     </div>
                     <div id="player_image">
-                        <img id="bankImage" src="avatars/blackjack2.jpg" alt=""/>
+                        <div id="textClassicTheme"></div>
+                        <img id="playerImage" src="avatars/blackjack2.jpg" alt=""/>
                     </div>
-                </div>
-                
+                </div>                
                 <div id="player_Name">
                     <label id="nameOfPlayer" for="name">Anonyme</label>
                 </div>
