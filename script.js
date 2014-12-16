@@ -1,16 +1,6 @@
-function setDefaultTheme()
-{
-	$("#table").css("background-color", "green");
-}
-
-function setOrangeTheme()
-{
-	$("#table").css("background-color", "orange");
-}
-
 // Global variables
-var partyStarted = false;
-var playerName= "abdel";
+var initialized = false;
+var playerName;
 
 var cardsArray; // All cards with all needed infos/values
 var totalCardsDrawed; // Drawed cards counter (for each party)
@@ -111,7 +101,7 @@ function equality()
 function partyEnded()
 {
 	finished = true;
-	$("#play").prop("disabled", false);
+	//$("#play").prop("disabled", false);
 	$("#btnDouble").prop("disabled", true);
 	$("#stand").prop("disabled", true);
 	$("#hit").prop("disabled", true);
@@ -210,10 +200,28 @@ function dealCard()
 // Set a new game (new card draw)
 function newGame()
 {	
-    //Check id the party has been initialized
-    if(!partyStarted)
+    //Disable new game button
+    /*
+    //Check if the party has been initialized
+    if(partyStarted){
         return;
-		
+    }
+    */
+    
+    // Initialize the game
+    if(!initialized)
+    {
+        initialized = true;
+        initializeGame();
+    }
+    newParty();
+    if (playerMoney < playerBet)
+        {
+            $("#btnDouble").prop("disabled", true);
+        }
+    else
+        $("#btnDouble").prop("disabled", false);
+    /*
     //Check if game's bet has been set up
     if(checkBet())
     {
@@ -236,6 +244,7 @@ function newGame()
         setBackgroundColor("red");
         //Add animation!
     }
+    */
 }
 // Set a new party (when you enter into the casino)
 function newParty()
@@ -255,7 +264,7 @@ function newParty()
 	$("#btnDouble").prop("disabled", false);
 	$("#stand").prop("disabled", false);
 	$("#hit").prop("disabled", false);
-	$("#play").prop("disabled", true);
+	//$("#play").prop("disabled", true);
 	
 	$("#bank").empty();
 	$("#player_cards").empty();       
@@ -282,15 +291,17 @@ function bankFirstDraw()
 function bankDraw()
 {	
 	//Check id the party has been initialized
+        /*
 	if(!partyStarted)
 		return;
+                */
 			
 	setTimeout(function()
     {
         bankCards.push(cardsArray[dealCard()]);
         $("#bank").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + bankCards[bankCards.length-1][1] + '.png"/>');
-        updateBankPoints();
         animateCard();
+        updateBankPoints();
         if(bankPoints < 17)
         {
             bankDraw();
@@ -301,9 +312,11 @@ function bankDraw()
 // Player draw a card
 function playerDraw()
 {       
-	//Check id the party has been initialized
+	//Check if the party has been initialized
+        /*
 	if(!partyStarted)
 		return;
+    */
 		
 	if (playerCards.length >= 2)
 	{
@@ -313,7 +326,7 @@ function playerDraw()
 	playerCards.push(cardsArray[dealCard()]);
 	$("#player_cards").append('<img id="' + totalCardsDrawed + '" src="classic-cards/' + playerCards[playerCards.length-1][1] + '.png"/>');
 	updatePlayerPoints();
-    animateCard();    
+        animateCard();    
 	checkParty();
 }
 
@@ -449,10 +462,6 @@ function setDeck()
 		}
 	}
 }
-
-function getPlayerName(){
-        
-}
 function setPlayerName(){
     var textField = document.getElementById("playerName");
     playerName = textField.value;
@@ -466,22 +475,26 @@ function setPlayerName(){
 function setTotalBet(){
     //var bet = document.getElementById("bet");
     var betDisplay = document.getElementById("totalBetSpan");
-    //playerMoney = bet.value;
-    playerMoney = Number($("#bet").val());
+    
+    //playerMoney = Number($("#bet").val());
+    playerMoney = 1000;
+    /*
     if(playerMoney < 300)
     {
         document.getElementById("betSlider").max = playerMoney;
     }
+    */
     betDisplay.appendChild(document.createTextNode(playerMoney));
 }
 function initializeGame(){
+        // Initialise all variables for all game
+        cardsArray = setDeck();
         setPlayerName();
         setTotalBet();
-        var nameInput = document.getElementById("playerName").disabled = true;
-        var totalBetInput = document.getElementById("bet").disabled = true;       
-        $("#newgame").prop("disabled", true);
-        $("#play").prop("disabled", false);
-        partyStarted = true;
+        //var nameInput = document.getElementById("playerName").disabled = true;
+        //var totalBetInput = document.getElementById("bet").disabled = true;       
+        //$("#newgame").prop("disabled", true);
+        //$("#play").prop("disabled", false);
         //Change description text
         setDescription("Click \"Play\" to start a new party");        
 }
@@ -518,9 +531,4 @@ function setDescription(desc){
     if(!defaultTheme){
         document.getElementById("textClassicTheme").innerHTML = desc;
     }  
-}
-//Check if the party has been intialized
-function checkStartGame(){
-    if(!partyStarted)
-        return;
 }

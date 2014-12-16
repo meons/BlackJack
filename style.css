@@ -34,7 +34,7 @@ html, body{
 }
 #settings{
     border: 2px solid white;
-    height:65%;
+    height:50%;
     width:70%;
     margin-top: 60%;
     margin-left:15%;
@@ -69,14 +69,28 @@ input[type=button]
     margin:auto;
     margin-top: 1%;
 }
-#bank{
+#bankTable{
     height:48%;
+    width:100%;
+}
+#bank_Score{
+    width:13.5%;
+    height: 100%;
+    display:inline-block;
+    vertical-align: top;
+    margin-left: 1%;
+}
+#bank{
+    height:100%;
     width:70%;
+    display:inline-block;
+    vertical-align: top;
     margin:auto;
     -webkit-box-shadow: inset -11px 16px 63px 24px rgba(0,0,0,0.52);
     -moz-box-shadow: inset -11px 16px 63px 24px rgba(0,0,0,0.52);
     box-shadow: inset -11px 16px 63px 24px rgba(0,0,0,0.52);
 }
+
 #bank div, #player_cards div{    
     width:15.9%;
     height:80%;

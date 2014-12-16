@@ -16,12 +16,7 @@
         <div id="side">
             <div id="settings">                
                 <label class="font-white" for="setName">Player Name</label>
-                <input id="playerName" type="text" name="name" />                
-                <br>
-                <label  class="font-white" for="bet">Bet (.-CHF)</label>
-                <input id="bet" type="text" value="300" name="name" disabled="disabled"/>
-                <br/>
-                <input type="range" id="totalBetSlider" min="50" max="3500" step="150" value="300" onChange="sliderChange(this.value, 'bet')">
+                <input id="playerName" type="text" name="name" />               
                 <hr>
                 <p><input id="theme"  class="bouton" type="button" value="Change Theme" name="theme" 
                        onmouseout="defaultAnimationButton('changeTheme')" 
@@ -30,11 +25,7 @@
                 <p><input id="newgame"  class="bouton" type="button" value="New Game" name="new_game" 
                        onmouseout="defaultAnimationButton('newgame')" 
                        onmouseover="animateButton('newgame')" 
-                       onclick="initializeGame(); defaultAnimationButton('newgame')"/></p>
-                <p><input id="play"  class="bouton" type="button" value="Play" name="play" disabled="disabled"
-                       onmouseout="defaultAnimationButton('play')" 
-                       onmouseover="animateButton('play')" 
-                       onclick="newGame(); defaultAnimationButton('play')"/></p>
+                       onclick="newGame(); defaultAnimationButton('newgame')"/></p>
                 <p><input id="hit" type="button" class="bouton" value="Hit" name="hit" disabled="disabled"
                        onmouseout="defaultAnimationButton('hit')" 
                        onmouseover="animateButton('hit')" 
@@ -51,7 +42,14 @@
         </div><div id="content">
             <div id="bank_layer">
                 <div id="bank_image"><img id="bankImage" src="avatars/blackjack1.png" alt=""/></div>
-                <div id="bank"></div>
+                <div id="bankTable">
+                    <div id="bank_Score">
+                        <label class="labelStyle">Bank score:</label>
+                        <span id="bankScore" class="font-white">0</span>
+                    </div>
+                    <div id="bank"></div>                    
+                </div>
+                
             </div>
             
             <div id="player_layer">                
@@ -64,9 +62,8 @@
                         <br/><br/>
                         <label class="labelStyle">Your score:</label>
                         <span id="playerScore" class="font-white">0</span>
-                        <br/><br/>
-                        <label class="labelStyle">Bank score:</label>
-                        <span id="bankScore" class="font-white">0</span>
+                        
+                        
                     </div>
                     <div id="player_cards"></div>
                     <div id="totalBet">
